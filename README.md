@@ -17,3 +17,11 @@ All the animations are taken care of by the view, no work is needed there. All o
 </ul>
 <h3>Mock Ups</h3>
 <img src="https://drive.google.com/uc?export=view&id=1kYKqzbyezM8DjMLYRZI6cCAveYsYzb_B" width=300px height=300px/>
+
+<h2>Part Two</h2>
+<h3>Requirements</h3>
+<ul>
+  <li>The source code should all be unit tested</li>
+  <li>The system should save the game to a text file when the user presses the 'S' key</li>
+  <li>The system should load the last saved game when the user presses the 'L' key</li>
+</ul>
