@@ -2,7 +2,8 @@
 
 Your goal is to implement the functionality for the model of a checkers game. 
 
-The board is to be represented by a 8x8 2D array of squares. Each square may contain a piece, denoted as Color and Rank. An empty square should have its piece attribute set to null. 
+The board is to be represented by a 8x8 2D array of strings. Pieces on the board should be donated as Color-Rank. For example, a Red Pawn should be R-P and Black King 
+should be B-K. An empty square should be denoted by the string EMPTY.
 
 All the animations are taken care of by the view, no work is needed there. All off your logic should be in the update method of the Model. 
 
@@ -18,6 +19,4 @@ All the animations are taken care of by the view, no work is needed there. All o
 </ul>
 <h3>Mock Ups</h3>
 <img src="https://drive.google.com/uc?export=view&id=1kYKqzbyezM8DjMLYRZI6cCAveYsYzb_B" width=300px height=300px/>
-<h3>Data Model</h3>
-<img src="https://drive.google.com/uc?export=view&id=1XGu8Sw4OrERgx340VLFtVo0NjJeqe5_S" width=300px height=200px/>
 
