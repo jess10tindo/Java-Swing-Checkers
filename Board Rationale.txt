@@ -1,0 +1,6 @@
+So when you look at the image i added we notice a few things....
+
+Whenever we are in an EVEN ROW, we can only play ODD COLUMN spots,
+Similarly, whenever we are in an ODD ROW, we can only play EVEN column spots
+
+The board will be represented as a 2d array [][]
