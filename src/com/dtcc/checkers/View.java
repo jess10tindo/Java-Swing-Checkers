@@ -2,6 +2,8 @@ package com.dtcc.checkers;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -10,6 +12,8 @@ public class View extends JPanel {
     private String[][] board;
     private Point start;
     private Point end;
+    private char pressedKey;
+    private int keyCount = 0;
 
     public View(String[][] board){
 
@@ -33,6 +37,20 @@ public class View extends JPanel {
             }
         });
 
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
+                    @Override
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if(keyCount == 1) {
+                            pressedKey = e.getKeyChar();
+
+                        }
+                        keyCount++;
+                        keyCount %= 3;
+                        return false;
+                    }
+                });
+
     }
 
     private boolean isInBounds(Point p){
@@ -43,20 +61,25 @@ public class View extends JPanel {
         return start != null && end != null;
     }
 
-    public int getStartCol() {
-        return (start.x-100)/100;
+    public Move getMove(){
+
+        Move move = new Move();
+
+        move.startX = (start.x-100)/100;
+        move.startY = (start.y-100)/100;
+        move.endX = (end.x-100)/100;
+        move.endY = (end.y-100)/100;
+
+        return move;
+
     }
 
-    public int getStartRow() {
-        return (start.y-100)/100;
-    }
+    public char getPressedKey(){
 
-    public int getEndCol() {
-        return (end.x-100)/100;
-    }
+        char heisenbergChar = this.pressedKey;
+        this.pressedKey = '-';
 
-    public int getEndRow() {
-        return (end.y-100)/100;
+        return heisenbergChar;
     }
 
     @Override

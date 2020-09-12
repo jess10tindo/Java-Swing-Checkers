@@ -12,24 +12,24 @@ public class Controller extends JFrame {
     private View view;
     private Model model;
 
-    private String[][] board;
-
     public Controller() {
 
         model = new Model();
-        board = model.create();
-        view = new View(board);
+        view = new View(model.getBoard());
 
         drawAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
+                char pressedKey = view.getPressedKey();
                 if(view.isMoveSelected()){
-                    board = model.update(
-                            board,
-                            view.getStartCol(),
-                            view.getStartRow(),
-                            view.getEndCol(),
-                            view.getEndRow());
+                    String[][] board = model.update(view.getMove());
                     view.update(board);
+                }
+                else if(pressedKey == 's'){
+                    model.save();
+                }
+                else if(pressedKey == 'l'){
+                    model.load();
+                    view.update(model.getBoard());
                 }
             }
         };

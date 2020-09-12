@@ -2,11 +2,20 @@ package com.dtcc.checkers;
 
 public class Model {
 
-    public String[][] create(){
+    public String[][] update(Move move){
+        return  null;
+    }
+
+    public String[][] getBoard() {
         return null;
     }
 
-    public String[][] update(String[][] board, int startX, int startY, int endX, int endY){
-        return  board;
+    public void save(){
+        System.out.println("Save");
+
+    }
+
+    public void load(){
+        System.out.println("Load");
     }
 }
