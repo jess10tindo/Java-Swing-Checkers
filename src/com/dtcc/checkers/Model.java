@@ -10,12 +10,7 @@ public class Model {
         return null;
     }
 
-    public void save(){
-        System.out.println("Save");
+    public void save(){}
 
-    }
-
-    public void load(){
-        System.out.println("Load");
-    }
+    public void load(){}
 }
