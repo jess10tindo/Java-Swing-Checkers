@@ -1,0 +1,15 @@
+To-DO:
+-------------------------------------------------------------------
+1) The system generates a new game board (see mock up) (Populate with pices, new board) - Vara
+
+2) The user can move their piece - Stephen
+
+3) The system removes the opponent's piece when the user performs a jump - Cedric 
+
+4) The user's piece is kinged when they reach the opposite side of the board - Jessica
+    ---> Plus updating other methods for King movements
+
+5)The system should save the game to a text file when the user presses the 's' key - Cedric/Jess
+6)The system should load the last saved game when the user presses the 'l' key - Cedric/Jess
+
+7)The source code should all be unit tested - Everyone for their own methods
