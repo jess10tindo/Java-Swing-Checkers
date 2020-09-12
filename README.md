@@ -2,7 +2,7 @@
 
 Your goal is to implement the functionality for the model of a checkers game. 
 
-The board is to be represented by a 8x8 2D array of strings. Pieces on the board should be donated as Color-Rank. For example, a Red Pawn should be R-P and Black King 
+The board is to be represented by a 8x8 2D array of strings. Pieces on the board should be denoted as Color-Rank. For example, a Red Pawn should be R-P and Black King 
 should be B-K. An empty square should be denoted by the string EMPTY.
 
 All the animations are taken care of by the view, no work is needed there. All off your logic should be in the update method of the Model. 
