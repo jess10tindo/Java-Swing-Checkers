@@ -25,10 +25,11 @@ public class Controller extends JFrame {
                     view.update(board);
                 }
                 else if(pressedKey == 's'){
-                    model.save();
+                	String temp_board[][] = model.getBoard();
+                    Model.save(temp_board);
                 }
                 else if(pressedKey == 'l'){
-                    model.load();
+                    Model.load();
                     view.update(model.getBoard());
                 }
             }
