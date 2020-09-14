@@ -90,11 +90,12 @@ public class View extends JPanel {
             for(int j = 1; j < 9; j++){
 
                 if(i%2 == j%2){
-                    g.setColor(Color.decode("#a52a2a"));
+                	 g.setColor(Color.decode("#FFFFFF"));
                 }
 
                 else{
-                    g.setColor(Color.decode("#D2B48C"));
+                	g.setColor(Color.decode("#a52a2a"));
+                   
                 }
 
                 g.fillRect(i*100, j*100, 100, 100);
