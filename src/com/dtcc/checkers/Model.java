@@ -1,4 +1,3 @@
-//testing
 package com.dtcc.checkers;
 
 import java.io.File;
@@ -15,9 +14,30 @@ public class Model {
     }
 
     public String[][] getBoard() {
-        return null;
+        return populateNewBoard();
     }
 
+    //populate pieces on the board
+    
+    public String[][] populateNewBoard() {
+    	String board[][] = new String[8][8];
+		for(int i = 0; i <= 7; i++) {
+			for(int j = 0; j <= 7; j++) {
+				board[i][j] = "EMPTY";
+				if((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)) {
+					if(i<3) {
+						board[i][j] = "R-P";
+					}
+					if(i>4) {
+						board[i][j] = "B-P";
+					}
+				}
+			}
+		}
+		return board;
+    }
+    
+    
     public void save(){
 		try {
 			
