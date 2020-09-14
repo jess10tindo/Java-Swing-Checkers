@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Model {
 	
-	private final static String File = "src\\com\\dtcc\\checkers\\Checkers_Save_File.tx";
+	private final static String File = "src\\com\\dtcc\\checkers\\Checkers_Save_File.txt";
 	
     public String[][] update(Move move){
         return  null;
