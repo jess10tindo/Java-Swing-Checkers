@@ -90,7 +90,7 @@ public class View extends JPanel {
             for(int j = 1; j < 9; j++){
 
                 if(i%2 == j%2){
-                	 g.setColor(Color.decode("#000000"));
+                	 g.setColor(Color.decode("#FFFFFF"));
                 }
 
                 else{
