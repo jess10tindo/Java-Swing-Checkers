@@ -99,25 +99,6 @@ public class Model {
 			
 		}
     }
-    
-    public void makeKing() {
-    	
-    }
-    
-    public void normalMove() {
-    	
-    }
-    
-    public void jumpMove() {
-    	
-    }
-    
-    public void kingNormalMove() {
-    	
-    }
-    
-    public void kingJumpMove() {
-    	
-    }
+
     
 }
