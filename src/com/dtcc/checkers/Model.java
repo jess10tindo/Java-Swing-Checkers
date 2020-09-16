@@ -34,6 +34,7 @@ public class Model {
 	}
 	
 	public String[][] update(Move move){
+
     	String movingPiece = board[move.startY][move.startX];
     	//Standard Move Red, No king
     	if(board[move.startY][move.startX].equals("R-P") && turn == "R" && (move.endY != move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))){
@@ -45,6 +46,7 @@ public class Model {
     	    	}
     		}
     	}
+
     	//Jump for Red, No King
     	else if(board[move.startY][move.startX].equals("R-P") && turn == "R" && (move.endY == move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))){
     		if(board[move.endY][move.endX].equals("EMPTY")) {
@@ -94,6 +96,7 @@ public class Model {
     	//printBoard(board);
     	//System.out.println("-----------------------");
     	System.out.println(turn);
+    	makeKing();
 		return board;
     }
 	
@@ -173,5 +176,20 @@ public class Model {
     		}
     		System.out.println();
     	}
+    }
+    
+    public String[][] makeKing() {
+    	for(int i = 0; i < 8; i++) {
+    		if(board[0][i].equals("B-P")) {
+        		board[0][i] = "B-K";
+    		}
+    	}
+    	for(int i = 0; i < 8; i++) {
+    		if(board[7][i].equals("R-P")) {
+        		board[7][i] = "R-K";
+    		}
+    	}
+		return board;
+    	
     }
 }
