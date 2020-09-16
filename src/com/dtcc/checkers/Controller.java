@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 public class Controller extends JFrame {
 
     private Action drawAction;
-    private final int drawDelay = 30; //msec
+    private final int drawDelay = 30; //Music
 
     private View view;
     private Model model;

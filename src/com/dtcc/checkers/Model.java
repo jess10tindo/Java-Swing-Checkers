@@ -7,6 +7,11 @@ import java.util.Scanner;
 
 public class Model {
 	
+	//Default Black Starts
+	String turn = "B";
+	int black_count = 12;
+	int red_count = 12;
+	
 	private String[][] board;
 	private final static String File = "src\\com\\dtcc\\checkers\\Checkers_Save_File.txt";
 	
@@ -30,24 +35,65 @@ public class Model {
 	
 	public String[][] update(Move move){
     	String movingPiece = board[move.startY][move.startX];
-    	
-    	if(board[move.startY][move.startX].equals("R-P")){
+    	//Standard Move Red, No king
+    	if(board[move.startY][move.startX].equals("R-P") && turn == "R" && (move.endY != move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))){
     		if(board[move.endY][move.endX].equals("EMPTY")) {
     			if((move.endY == move.startY + 1 && move.endX == move.startX+1) || (move.endY == move.startY + 1 && move.endX == move.startX-1)) {
     	    		board[move.endY][move.endX] = movingPiece;
     	    		board[move.startY][move.startX] = "EMPTY";
+    	    		turn = "B";
     	    	}
     		}
     	}
-        
-    	else if(board[move.startY][move.startX].equals("B-P")){
+    	//Jump for Red, No King
+    	else if(board[move.startY][move.startX].equals("R-P") && turn == "R" && (move.endY == move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))){
+    		if(board[move.endY][move.endX].equals("EMPTY")) {
+	    		if(((move.endY == move.startY + 2) && (move.endX == move.startX+2) && (board[move.startY +1][move.startX + 1].equals("B-P")))){
+	    			board[move.endY][move.endX] = movingPiece;
+		    		board[move.startY][move.startX] = "EMPTY";
+		    		board[move.startY+1][move.startX + 1] = "EMPTY";
+		    		black_count -=1;
+		    		turn = "B";
+	    		}else if((move.endY == move.startY + 2 && move.endX == move.startX-2 && board[move.startY +1][move.startX - 1].equals("B-P"))) {
+	    			board[move.endY][move.endX] = movingPiece;
+		    		board[move.startY][move.startX] = "EMPTY";
+		    		board[move.startY +1][move.startX - 1] = "EMPTY";
+		    		black_count -=1;
+		    		turn = "B";
+	    		}
+    		}
+    	}
+        //Standard Move Black, no king
+    	else if(board[move.startY][move.startX].equals("B-P") && turn == "B" && (move.endY != move.startY - 2) && !(board[move.startY][move.startX].equals("R-K"))){
     		if(board[move.endY][move.endX].equals("EMPTY")) {
 	    		if((move.endY == move.startY - 1 && move.endX == move.startX+1) || (move.endY == move.startY - 1 && move.endX == move.startX-1)) {
 		    		board[move.endY][move.endX] = movingPiece;
 		    		board[move.startY][move.startX] = "EMPTY";
+		    		turn = "R";
 	    		}
     		}
     	}
+    	//Jump for Black, No King
+    	else if(board[move.startY][move.startX].equals("B-P") && turn == "B" && (move.endY == move.startY - 2) && !(board[move.startY][move.startX].equals("B-K"))){
+    		if(board[move.endY][move.endX].equals("EMPTY")) {
+	    		if(((move.endY == move.startY - 2) && (move.endX == move.startX+2) && (board[move.startY -1][move.startX + 1].equals("R-P")))){
+	    			board[move.endY][move.endX] = movingPiece;
+		    		board[move.startY][move.startX] = "EMPTY";
+		    		board[move.startY -1][move.startX + 1] = "EMPTY";
+		    		red_count-=1;
+		    		turn = "R";
+	    		}else if((move.endY == move.startY - 2 && move.endX == move.startX-2 && board[move.startY -1][move.startX - 1].equals("R-P"))) {
+	    			board[move.endY][move.endX] = movingPiece;
+		    		board[move.startY][move.startX] = "EMPTY";
+		    		board[move.startY -1][move.startX - 1] = "EMPTY";
+		    		red_count-=1;
+		    		turn = "R";
+	    		}
+    		}
+    	}
+    	//printBoard(board);
+    	//System.out.println("-----------------------");
+    	System.out.println(turn);
 		return board;
     }
 	
@@ -55,8 +101,6 @@ public class Model {
     	return board;
     }
 
-    
-    public static void save(String board[][]){
     //populate pieces on the board
     public String[][] populateNewBoard() {
     	String board[][] = new String[8][8];
@@ -76,11 +120,10 @@ public class Model {
 		return board;
     }
     
-    
-    public void save(){
+    public static void save(String[][] temp){
 		try {
 			PrintWriter out = new PrintWriter(new File(File));
-			String temp_board[][] = board;
+			String[][] temp_board = temp;
 			System.out.println(temp_board.length);
 			//Rows
 			for(int y = 0; y < temp_board.length; y++) {
@@ -118,7 +161,17 @@ public class Model {
 		catch(FileNotFoundException e) {
 			//Do Something
 		}
-    }
-
+    } 
     
+    public static void printBoard(String[][] temp) {
+    	String[][] temp_board = temp;
+    	
+    	for(int i = 0; i < temp_board.length; i++) {
+    		for(int j = 0; j < temp_board.length; j++) {
+    			
+    			System.out.print(temp_board[i][j] + " ");
+    		}
+    		System.out.println();
+    	}
+    }
 }
