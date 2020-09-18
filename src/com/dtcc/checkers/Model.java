@@ -34,12 +34,28 @@ public class Model {
 	}
 
 	public String[][] update(Move move) {
+
+		System.out.println("Start Turn:");
+		System.out.println("~~~~~~~~~~");
+		System.out.println("Current Turn: " + turn);
+		System.out.println("Start click: (Y:X) "   +  board[move.startY][move.startX] + " : " + move.startY + " , " + move.startX);
+		System.out.println("Legal king jump?: " + isJumpMoveKingLegal(move));
+		System.out.println("-------------------");
+
 		normalMoveNoKing(move, isNormalMoveNoKingLegal(move));
 		jumpMoveNoKing(move, isJumpMoveNoKingLegal(move));
 		normalMoveKing(move, isNormalMoveKingLegal(move));
 		jumpMoveKing(move, isJumpMoveKingLegal(move));
 
 		makeKing();
+
+		System.out.println("End Turn:");
+		System.out.println("~~~~~~~~~~");
+		System.out.println("Current Turn: " + turn);
+		System.out.println("End Click: (Y:X) "   +  board[move.startY][move.startX] + " : " + move.endY + " , " + move.endX);
+		System.out.println("Legal king jump?: " + isJumpMoveKingLegal(move));
+		System.out.println("-------------------");
+
 		return board;
 	}
 
@@ -122,12 +138,11 @@ public class Model {
 		}
 		return spaceIsEmpty;
 	}
-
-
+	//No king
 	public boolean isNormalMoveNoKingLegal(Move move) {
 		boolean isNormalMoveNoKingLegal = false;
 		if (turn.equals("R")) {
-			if (board[move.startY][move.startX].equals("R-P") && (move.endY != move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))) {
+			if (board[move.startY][move.startX].equals("R-P") && (move.endY == move.startY + 1) && !(board[move.startY][move.startX].equals("R-K"))) {
 				if (spaceIsEmpty(move)) {
 					if ((move.endY == move.startY + 1 && move.endX == move.startX + 1) || (move.endY == move.startY + 1 && move.endX == move.startX - 1)) {
 						isNormalMoveNoKingLegal = true;
@@ -135,7 +150,7 @@ public class Model {
 				}
 			}
 		} else if (turn.equals("B")) {
-			if (board[move.startY][move.startX].equals("B-P") && (move.endY != move.startY - 2) && !(board[move.startY][move.startX].equals("R-K"))) {
+			if (board[move.startY][move.startX].equals("B-P") && (move.endY == move.startY - 1) && !(board[move.startY][move.startX].equals("B-K"))) {
 				if (spaceIsEmpty(move)) {
 					if ((move.endY == move.startY - 1 && move.endX == move.startX + 1) || (move.endY == move.startY - 1 && move.endX == move.startX - 1)) {
 						isNormalMoveNoKingLegal = true;
@@ -146,25 +161,18 @@ public class Model {
 		}
 		return isNormalMoveNoKingLegal;
 	}
-
+	//No king
 	public String[][] normalMoveNoKing(Move move, boolean isNormalMoveNoKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isNormalMoveNoKingLegal == true) {
-			if (turn.equals("R")) {
-				board[move.endY][move.endX] = movingPiece;
-				board[move.startY][move.startX] = "EMPTY";
-				turn = "B";
-			} else {
-				board[move.endY][move.endX] = movingPiece;
-				board[move.startY][move.startX] = "EMPTY";
-				turn = "R";
-			}
+			board[move.endY][move.endX] = movingPiece;
+			board[move.startY][move.startX] = "EMPTY";
+			if (turn.equals("R")) { turn = "B"; }
+			else
+				if(turn.equals("B")) { turn = "R"; }
 		}
 		return board;
 	}
-
-
-
 
 	public boolean isJumpMoveNoKingLegal(Move move) {
 		boolean isJumpMoveNoKingLegal = false;
@@ -233,15 +241,10 @@ public class Model {
 		return board;
 	}
 
-
-
-
-
-
 	public boolean isNormalMoveKingLegal(Move move) {
 		boolean isNormalMoveKingLegal = false;
 		if (turn.equals("R")) {
-			if (board[move.startY][move.startX].charAt(2) == 'K' &&
+			if (board[move.startY][move.startX].equals("R-K") &&
 					spaceIsEmpty(move) &&
 					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
 					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
@@ -251,7 +254,7 @@ public class Model {
 			}
 		}
 		else if (turn.equals("B")) {
-			if (board[move.startY][move.startX].charAt(2) == 'K' &&
+			if (board[move.startY][move.startX].equals("B-K") &&
 					spaceIsEmpty(move) &&
 					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
 					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
@@ -262,7 +265,7 @@ public class Model {
 		}
 		return isNormalMoveKingLegal;
 	}
-
+	//Normal King
 	public String[][] normalMoveKing(Move move, boolean isNormalMoveKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isNormalMoveKingLegal) {
@@ -270,18 +273,13 @@ public class Model {
 			board[move.startY][move.startX] = "EMPTY";
 			if (turn.equals("R")) {
 				turn = "B";
-			} else {
+			} else if (turn.equals("B")) {
 				turn = "R";
 			}
 		}
 		return board;
 	}
-
-
-
-
-
-
+	//jUMP kING
 	public String[][] jumpMoveKing(Move move, boolean isJumpMoveKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isJumpMoveKingLegal) {
@@ -290,50 +288,15 @@ public class Model {
 			removeJumpedPiece(move, movingPiece);
 			if (turn.equals("R")) {
 				turn = "B";
-			} else {
+			} else if (turn.equals("B")){
 				turn = "R";
 			}
 		}
 		return board;
 	}
 
-//	public boolean jumpKingMovePossible(Move move) {
-//		boolean jumpKingMoveIsPossible = false;
-//		boolean jumpedSpaceIsOpponent = false;
-//		if (turn.equals("R")) {
-//			if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
-//					(board[move.endY + 1][move.endX + 1].charAt(0) == ('B'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
-//					(board[move.endY + 1][move.endX - 1].charAt(0) == ('B'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
-//					(board[move.endY - 1][move.endX + 1].charAt(0) == ('B'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
-//					(board[move.endY - 1][move.endX - 1].charAt(0) == ('B'))) {
-//				jumpKingMoveIsPossible = true;
-//			}
-//		}
-//		else{
-//			if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
-//					(board[move.endY + 1][move.endX + 1].charAt(0) == ('R'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
-//					(board[move.endY + 1][move.endX - 1].charAt(0) == ('R'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
-//					(board[move.endY - 1][move.endX + 1].charAt(0) == ('R'))) {
-//				jumpKingMoveIsPossible = true;
-//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
-//					(board[move.endY - 1][move.endX - 1].charAt(0) == ('R'))) {
-//				jumpKingMoveIsPossible = true;
-//			}
-//		}
-//		return jumpKingMoveIsPossible;
-//	}
-
 	public boolean isJumpMoveKingLegal(Move move) {
+
 		boolean isJumpMoveKingLegal = false;
 		if (turn.equals("R")) {
 			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
@@ -351,7 +314,9 @@ public class Model {
 					isJumpMoveKingLegal = true;
 				}
 			}
+			return isJumpMoveKingLegal;
 		}
+
 		if (turn.equals("B")) {
 			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
 				if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
@@ -368,6 +333,7 @@ public class Model {
 					isJumpMoveKingLegal = true;
 				}
 			}
+			return isJumpMoveKingLegal;
 		}
 		return isJumpMoveKingLegal;
 	}
