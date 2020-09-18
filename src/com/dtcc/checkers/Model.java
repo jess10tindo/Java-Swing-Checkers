@@ -36,35 +36,14 @@ public class Model {
 	public String[][] update(Move move) {
 		normalMoveNoKing(move, isNormalMoveNoKingLegal(move));
 		jumpMoveNoKing(move, isJumpMoveNoKingLegal(move));
-
-		// Future methods I am working on:
-		// normalMoveKing(move, isNormalMoveKingLegal(move));
-		// jumpMoveKing(move, isJumpMoveKingLegal(move));
+		normalMoveKing(move, isNormalMoveKingLegal(move));
+		jumpMoveKing(move, isJumpMoveKingLegal(move));
 
 		makeKing();
 		return board;
 	}
 
 	public String[][] getBoard() {
-		return board;
-	}
-
-	//populate pieces on the board
-	public String[][] populateNewBoard() {
-		String board[][] = new String[8][8];
-		for (int i = 0; i <= 7; i++) {
-			for (int j = 0; j <= 7; j++) {
-				board[i][j] = "EMPTY";
-				if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)) {
-					if (i < 3) {
-						board[i][j] = "R-P";
-					}
-					if (i > 4) {
-						board[i][j] = "B-P";
-					}
-				}
-			}
-		}
 		return board;
 	}
 
@@ -136,11 +115,20 @@ public class Model {
 
 	}
 
+	public boolean spaceIsEmpty(Move move) {
+		boolean spaceIsEmpty = false;
+		if (board[move.endY][move.endX].equals("EMPTY")) {
+			spaceIsEmpty = true;
+		}
+		return spaceIsEmpty;
+	}
+
+
 	public boolean isNormalMoveNoKingLegal(Move move) {
 		boolean isNormalMoveNoKingLegal = false;
 		if (turn.equals("R")) {
 			if (board[move.startY][move.startX].equals("R-P") && (move.endY != move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))) {
-				if (board[move.endY][move.endX].equals("EMPTY")) {
+				if (spaceIsEmpty(move)) {
 					if ((move.endY == move.startY + 1 && move.endX == move.startX + 1) || (move.endY == move.startY + 1 && move.endX == move.startX - 1)) {
 						isNormalMoveNoKingLegal = true;
 					}
@@ -148,7 +136,7 @@ public class Model {
 			}
 		} else if (turn.equals("B")) {
 			if (board[move.startY][move.startX].equals("B-P") && (move.endY != move.startY - 2) && !(board[move.startY][move.startX].equals("R-K"))) {
-				if (board[move.endY][move.endX].equals("EMPTY")) {
+				if (spaceIsEmpty(move)) {
 					if ((move.endY == move.startY - 1 && move.endX == move.startX + 1) || (move.endY == move.startY - 1 && move.endX == move.startX - 1)) {
 						isNormalMoveNoKingLegal = true;
 					}
@@ -175,11 +163,14 @@ public class Model {
 		return board;
 	}
 
+
+
+
 	public boolean isJumpMoveNoKingLegal(Move move) {
 		boolean isJumpMoveNoKingLegal = false;
 		if (turn.equals("R")) {
 			if (board[move.startY][move.startX].equals("R-P") && (move.endY == move.startY + 2) && !(board[move.startY][move.startX].equals("R-K"))) {
-				if (board[move.endY][move.endX].equals("EMPTY")) {
+				if (spaceIsEmpty(move)) {
 					if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2) && (board[move.startY + 1][move.startX + 1].equals("B-P")))) {
 						isJumpMoveNoKingLegal = true;
 					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2 && board[move.startY + 1][move.startX - 1].equals("B-P"))) {
@@ -189,7 +180,7 @@ public class Model {
 			}
 		} else if (turn.equals("B")) {
 			if (board[move.startY][move.startX].equals("B-P") && turn == "B" && (move.endY == move.startY - 2) && !(board[move.startY][move.startX].equals("B-K"))) {
-				if (board[move.endY][move.endX].equals("EMPTY")) {
+				if (spaceIsEmpty(move)) {
 					if (((move.endY == move.startY - 2) && (move.endX == move.startX + 2) && (board[move.startY - 1][move.startX + 1].equals("R-P")))) {
 						isJumpMoveNoKingLegal = true;
 					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2 && board[move.startY - 1][move.startX - 1].equals("R-P"))) {
@@ -205,25 +196,229 @@ public class Model {
 		String movingPiece = board[move.startY][move.startX];
 		if (isJumpMoveNoKingLegal == true) {
 			if (turn.equals("R")) {
-				leftOrRightMovement(move, movingPiece);
+				if (spaceIsEmpty(move)) {
+					if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2) && (board[move.startY + 1][move.startX + 1].equals("B-P")))) {
+						board[move.endY][move.endX] = movingPiece;
+						board[move.startY][move.startX] = "EMPTY";
+						board[move.startY + 1][move.startX + 1] = "EMPTY";
+						black_count -= 1;
+						turn = "B";
+					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2 && board[move.startY + 1][move.startX - 1].equals("B-P"))) {
+						board[move.endY][move.endX] = movingPiece;
+						board[move.startY][move.startX] = "EMPTY";
+						board[move.startY + 1][move.startX - 1] = "EMPTY";
+						black_count -= 1;
+						turn = "B";
+					}
+				}
+			} else {
+				if (spaceIsEmpty(move)) {
+					if (((move.endY == move.startY - 2) && (move.endX == move.startX + 2) && (board[move.startY - 1][move.startX + 1].equals("R-P")))) {
+						board[move.endY][move.endX] = movingPiece;
+						board[move.startY][move.startX] = "EMPTY";
+						board[move.startY - 1][move.startX + 1] = "EMPTY";
+						red_count -= 1;
+						turn = "R";
+					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2 && board[move.startY - 1][move.startX - 1].equals("R-P"))) {
+						board[move.endY][move.endX] = movingPiece;
+						board[move.startY][move.startX] = "EMPTY";
+						board[move.startY - 1][move.startX - 1] = "EMPTY";
+						red_count -= 1;
+						turn = "R";
+					}
+				}
+			}
+
+		}
+		return board;
+	}
+
+
+
+
+
+
+	public boolean isNormalMoveKingLegal(Move move) {
+		boolean isNormalMoveKingLegal = false;
+		if (turn.equals("R")) {
+			if (board[move.startY][move.startX].charAt(2) == 'K' &&
+					spaceIsEmpty(move) &&
+					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
+					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
+					(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
+					(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
+				isNormalMoveKingLegal = true;
+			}
+		}
+		else if (turn.equals("B")) {
+			if (board[move.startY][move.startX].charAt(2) == 'K' &&
+					spaceIsEmpty(move) &&
+					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
+					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
+					(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
+					(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
+				isNormalMoveKingLegal = true;
+			}
+		}
+		return isNormalMoveKingLegal;
+	}
+
+	public String[][] normalMoveKing(Move move, boolean isNormalMoveKingLegal) {
+		String movingPiece = board[move.startY][move.startX];
+		if (isNormalMoveKingLegal) {
+			board[move.endY][move.endX] = movingPiece;
+			board[move.startY][move.startX] = "EMPTY";
+			if (turn.equals("R")) {
+				turn = "B";
+			} else {
+				turn = "R";
 			}
 		}
 		return board;
 	}
 
-	private void leftOrRightMovement(Move move, String movingPiece) {
-		if (((move.endY == move.startY - 2) && (move.endX == move.startX + 2) && (board[move.startY - 1][move.startX + 1].equals("R-P")))) {
+
+
+
+
+
+	public String[][] jumpMoveKing(Move move, boolean isJumpMoveKingLegal) {
+		String movingPiece = board[move.startY][move.startX];
+		if (isJumpMoveKingLegal) {
 			board[move.endY][move.endX] = movingPiece;
 			board[move.startY][move.startX] = "EMPTY";
-			board[move.startY - 1][move.startX + 1] = "EMPTY";
-			red_count -= 1;
-			turn = "R";
-		} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2 && board[move.startY - 1][move.startX - 1].equals("R-P"))) {
-			board[move.endY][move.endX] = movingPiece;
-			board[move.startY][move.startX] = "EMPTY";
-			board[move.startY - 1][move.startX - 1] = "EMPTY";
-			red_count -= 1;
-			turn = "R";
+			removeJumpedPiece(move, movingPiece);
+			if (turn.equals("R")) {
+				turn = "B";
+			} else {
+				turn = "R";
+			}
 		}
+		return board;
+	}
+
+//	public boolean jumpKingMovePossible(Move move) {
+//		boolean jumpKingMoveIsPossible = false;
+//		boolean jumpedSpaceIsOpponent = false;
+//		if (turn.equals("R")) {
+//			if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
+//					(board[move.endY + 1][move.endX + 1].charAt(0) == ('B'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+//					(board[move.endY + 1][move.endX - 1].charAt(0) == ('B'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
+//					(board[move.endY - 1][move.endX + 1].charAt(0) == ('B'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+//					(board[move.endY - 1][move.endX - 1].charAt(0) == ('B'))) {
+//				jumpKingMoveIsPossible = true;
+//			}
+//		}
+//		else{
+//			if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
+//					(board[move.endY + 1][move.endX + 1].charAt(0) == ('R'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+//					(board[move.endY + 1][move.endX - 1].charAt(0) == ('R'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
+//					(board[move.endY - 1][move.endX + 1].charAt(0) == ('R'))) {
+//				jumpKingMoveIsPossible = true;
+//			} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+//					(board[move.endY - 1][move.endX - 1].charAt(0) == ('R'))) {
+//				jumpKingMoveIsPossible = true;
+//			}
+//		}
+//		return jumpKingMoveIsPossible;
+//	}
+
+	public boolean isJumpMoveKingLegal(Move move) {
+		boolean isJumpMoveKingLegal = false;
+		if (turn.equals("R")) {
+			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
+				if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
+						(board[move.endY + 1][move.endX + 1].charAt(0) == ('B'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+						(board[move.endY + 1][move.endX - 1].charAt(0) == ('B'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
+						(board[move.endY - 1][move.endX + 1].charAt(0) == ('B'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+						(board[move.endY - 1][move.endX - 1].charAt(0) == ('B'))) {
+					isJumpMoveKingLegal = true;
+				}
+			}
+		}
+		if (turn.equals("B")) {
+			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
+				if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
+						(board[move.endY + 1][move.endX + 1].charAt(0) == ('R'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+						(board[move.endY + 1][move.endX - 1].charAt(0) == ('R'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
+						(board[move.endY - 1][move.endX + 1].charAt(0) == ('R'))) {
+					isJumpMoveKingLegal = true;
+				} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+						(board[move.endY - 1][move.endX - 1].charAt(0) == ('R'))) {
+					isJumpMoveKingLegal = true;
+				}
+			}
+		}
+		return isJumpMoveKingLegal;
+	}
+
+
+
+	public void removeJumpedPiece(Move move, String movingPiece) {
+		if(turn.equals("R")){
+			if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2))) {
+				board[move.startY + 1][move.startX + 1] = "EMPTY";
+				black_count -= 1;
+				turn = "B";
+			}
+			else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2)) {
+				board[move.startY + 1][move.startX - 1] = "EMPTY";
+				black_count -= 1;
+				turn = "B";
+			}
+			else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2)) {
+				board[move.startY - 1][move.startX + 1] = "EMPTY";
+				black_count -= 1;
+				turn = "B";
+			}
+			else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2)) {
+				board[move.startY - 1][move.startX - 1] = "EMPTY";
+				black_count -= 1;
+				turn = "B";
+			}
+		}
+		else if(turn.equals("B")){
+			if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2))) {
+				board[move.startY + 1][move.startX + 1] = "EMPTY";
+				black_count -= 1;
+				turn = "R";
+			}
+			else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2)) {
+				board[move.startY + 1][move.startX - 1] = "EMPTY";
+				black_count -= 1;
+				turn = "R";
+			}
+			else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2)) {
+				board[move.startY - 1][move.startX + 1] = "EMPTY";
+				black_count -= 1;
+				turn = "R";
+			}
+			else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2)) {
+				board[move.startY - 1][move.startX - 1] = "EMPTY";
+				black_count -= 1;
+				turn = "R";
+			}
+		}
+
 	}
 }
