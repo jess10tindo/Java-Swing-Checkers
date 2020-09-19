@@ -15,6 +15,7 @@ public class Model {
 	private String[][] board;
 	private final static String File = "src\\com\\dtcc\\checkers\\Checkers_Save_File.txt";
 
+
 	public Model() {
 		String[][] board = new String[8][8];
 		for (int i = 0; i <= 7; i++) {
@@ -34,28 +35,11 @@ public class Model {
 	}
 
 	public String[][] update(Move move) {
-
-		System.out.println("Start Turn:");
-		System.out.println("~~~~~~~~~~");
-		System.out.println("Current Turn: " + turn);
-		System.out.println("Start click: (Y:X) "   +  board[move.startY][move.startX] + " : " + move.startY + " , " + move.startX);
-		System.out.println("Legal king jump?: " + isJumpMoveKingLegal(move));
-		System.out.println("-------------------");
-
 		normalMoveNoKing(move, isNormalMoveNoKingLegal(move));
 		jumpMoveNoKing(move, isJumpMoveNoKingLegal(move));
 		normalMoveKing(move, isNormalMoveKingLegal(move));
 		jumpMoveKing(move, isJumpMoveKingLegal(move));
-
 		makeKing();
-
-		System.out.println("End Turn:");
-		System.out.println("~~~~~~~~~~");
-		System.out.println("Current Turn: " + turn);
-		System.out.println("End Click: (Y:X) "   +  board[move.startY][move.startX] + " : " + move.endY + " , " + move.endX);
-		System.out.println("Legal king jump?: " + isJumpMoveKingLegal(move));
-		System.out.println("-------------------");
-
 		return board;
 	}
 
@@ -79,15 +63,18 @@ public class Model {
 			}
 			out.close();
 		} catch (FileNotFoundException e) {
-			//Do something
+			new File(File);
 		}
 	}
 
-	public static void load() {
+	public static String[][] load() {
+
+		String temp_board[][] = new String[8][8];
+
 		try {
-			String temp_board[][] = new String[8][8];
+
 			Scanner input = new Scanner(new File(File));
-			//Only runs while 
+			//Only runs while
 			while (input.hasNext()) {
 				//Rows
 				for (int y = 0; y < temp_board.length; y++) {
@@ -98,10 +85,11 @@ public class Model {
 				}
 			}
 			input.close();
-			//Do something with temp_board, not sure yet.
 		} catch (FileNotFoundException e) {
-			//Do Something
+
+			e.printStackTrace();
 		}
+		return temp_board;
 	}
 
 	public static void printBoard(String[][] temp) {
@@ -131,6 +119,16 @@ public class Model {
 
 	}
 
+	public String switchTurn(Move move){
+		if(turn.equals("R")){
+			turn = "B";
+		}
+		else if (turn.equals("B")){
+			turn = "R";
+		}
+		return turn;
+	}
+
 	public boolean spaceIsEmpty(Move move) {
 		boolean spaceIsEmpty = false;
 		if (board[move.endY][move.endX].equals("EMPTY")) {
@@ -138,7 +136,7 @@ public class Model {
 		}
 		return spaceIsEmpty;
 	}
-	//No king
+
 	public boolean isNormalMoveNoKingLegal(Move move) {
 		boolean isNormalMoveNoKingLegal = false;
 		if (turn.equals("R")) {
@@ -150,26 +148,32 @@ public class Model {
 				}
 			}
 		} else if (turn.equals("B")) {
-			if (board[move.startY][move.startX].equals("B-P") && (move.endY == move.startY - 1) && !(board[move.startY][move.startX].equals("B-K"))) {
-				if (spaceIsEmpty(move)) {
-					if ((move.endY == move.startY - 1 && move.endX == move.startX + 1) || (move.endY == move.startY - 1 && move.endX == move.startX - 1)) {
-						isNormalMoveNoKingLegal = true;
-					}
+			if (board[move.startY][move.startX].equals("B-P") &&
+					(move.endY == move.startY - 1) &&
+					!(board[move.startY][move.startX].equals("R-K")) &&
+					spaceIsEmpty(move)) {
+				if ((move.endY == move.startY - 1 && move.endX == move.startX + 1) || (move.endY == move.startY - 1 && move.endX == move.startX - 1)) {
+					isNormalMoveNoKingLegal = true;
+
 				}
 			}
 
 		}
 		return isNormalMoveNoKingLegal;
 	}
-	//No king
+
 	public String[][] normalMoveNoKing(Move move, boolean isNormalMoveNoKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isNormalMoveNoKingLegal == true) {
-			board[move.endY][move.endX] = movingPiece;
-			board[move.startY][move.startX] = "EMPTY";
-			if (turn.equals("R")) { turn = "B"; }
-			else
-				if(turn.equals("B")) { turn = "R"; }
+			if (turn.equals("R")) {
+				board[move.endY][move.endX] = movingPiece;
+				board[move.startY][move.startX] = "EMPTY";
+				switchTurn(move);
+			} else if (turn.equals("B")){
+				board[move.endY][move.endX] = movingPiece;
+				board[move.startY][move.startX] = "EMPTY";
+				switchTurn(move);
+			}
 		}
 		return board;
 	}
@@ -205,34 +209,34 @@ public class Model {
 		if (isJumpMoveNoKingLegal == true) {
 			if (turn.equals("R")) {
 				if (spaceIsEmpty(move)) {
-					if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2) && (board[move.startY + 1][move.startX + 1].equals("B-P")))) {
+					if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2) && (board[move.startY + 1][move.startX + 1].charAt(0) == 'B'))) {
 						board[move.endY][move.endX] = movingPiece;
 						board[move.startY][move.startX] = "EMPTY";
 						board[move.startY + 1][move.startX + 1] = "EMPTY";
 						black_count -= 1;
-						turn = "B";
-					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2 && board[move.startY + 1][move.startX - 1].equals("B-P"))) {
+						switchTurn(move);
+					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2 && board[move.startY + 1][move.startX - 1].charAt(0) == 'B')) {
 						board[move.endY][move.endX] = movingPiece;
 						board[move.startY][move.startX] = "EMPTY";
 						board[move.startY + 1][move.startX - 1] = "EMPTY";
 						black_count -= 1;
-						turn = "B";
+						switchTurn(move);
 					}
 				}
-			} else {
+			} else if (turn.equals("B")) {
 				if (spaceIsEmpty(move)) {
-					if (((move.endY == move.startY - 2) && (move.endX == move.startX + 2) && (board[move.startY - 1][move.startX + 1].equals("R-P")))) {
+					if (((move.endY == move.startY - 2) && (move.endX == move.startX + 2) && (board[move.startY - 1][move.startX + 1].charAt(0) == 'R'))) {
 						board[move.endY][move.endX] = movingPiece;
 						board[move.startY][move.startX] = "EMPTY";
 						board[move.startY - 1][move.startX + 1] = "EMPTY";
 						red_count -= 1;
-						turn = "R";
-					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2 && board[move.startY - 1][move.startX - 1].equals("R-P"))) {
+						switchTurn(move);
+					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2 && board[move.startY - 1][move.startX - 1].charAt(0) == 'R')) {
 						board[move.endY][move.endX] = movingPiece;
 						board[move.startY][move.startX] = "EMPTY";
 						board[move.startY - 1][move.startX - 1] = "EMPTY";
 						red_count -= 1;
-						turn = "R";
+						switchTurn(move);
 					}
 				}
 			}
@@ -247,9 +251,9 @@ public class Model {
 			if (board[move.startY][move.startX].equals("R-K") &&
 					spaceIsEmpty(move) &&
 					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
-					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
-					(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
-					(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
+							(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
+							(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
+							(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
 				isNormalMoveKingLegal = true;
 			}
 		}
@@ -257,134 +261,291 @@ public class Model {
 			if (board[move.startY][move.startX].equals("B-K") &&
 					spaceIsEmpty(move) &&
 					((move.endY == move.startY + 1 && move.endX == move.startX + 1) ||
-					(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
-					(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
-					(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
+							(move.endY == move.startY + 1 && move.endX == move.startX - 1) ||
+							(move.endY == move.startY - 1 && move.endX == move.startX + 1) ||
+							(move.endY == move.startY - 1 && move.endX == move.startX - 1))){
 				isNormalMoveKingLegal = true;
 			}
 		}
 		return isNormalMoveKingLegal;
 	}
-	//Normal King
+
 	public String[][] normalMoveKing(Move move, boolean isNormalMoveKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isNormalMoveKingLegal) {
 			board[move.endY][move.endX] = movingPiece;
 			board[move.startY][move.startX] = "EMPTY";
-			if (turn.equals("R")) {
-				turn = "B";
-			} else if (turn.equals("B")) {
-				turn = "R";
-			}
+			switchTurn(move);
 		}
 		return board;
 	}
-	//jUMP kING
+
 	public String[][] jumpMoveKing(Move move, boolean isJumpMoveKingLegal) {
 		String movingPiece = board[move.startY][move.startX];
 		if (isJumpMoveKingLegal) {
 			board[move.endY][move.endX] = movingPiece;
 			board[move.startY][move.startX] = "EMPTY";
 			removeJumpedPiece(move, movingPiece);
-			if (turn.equals("R")) {
-				turn = "B";
-			} else if (turn.equals("B")){
-				turn = "R";
-			}
+			switchTurn(move);
 		}
 		return board;
 	}
 
 	public boolean isJumpMoveKingLegal(Move move) {
-
 		boolean isJumpMoveKingLegal = false;
-		if (turn.equals("R")) {
-			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
-				if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
-						(board[move.endY + 1][move.endX + 1].charAt(0) == ('B'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
-						(board[move.endY + 1][move.endX - 1].charAt(0) == ('B'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
-						(board[move.endY - 1][move.endX + 1].charAt(0) == ('B'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
-						(board[move.endY - 1][move.endX - 1].charAt(0) == ('B'))) {
-					isJumpMoveKingLegal = true;
+
+		if((move.startX < 6 && move.startX > 1) && (move.startY < 6 && move.startY > 1)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("R-P"))){
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY + 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
 				}
 			}
-			return isJumpMoveKingLegal;
+			if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
 		}
 
-		if (turn.equals("B")) {
-			if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move)){
-				if ((move.endY == move.startY + 2 && move.endX == move.startX + 2) &&
-						(board[move.endY + 1][move.endX + 1].charAt(0) == ('R'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
-						(board[move.endY + 1][move.endX - 1].charAt(0) == ('R'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2) &&
-						(board[move.endY - 1][move.endX + 1].charAt(0) == ('R'))) {
-					isJumpMoveKingLegal = true;
-				} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
-						(board[move.endY - 1][move.endX - 1].charAt(0) == ('R'))) {
-					isJumpMoveKingLegal = true;
+		else if ((move.startX < 2) && (move.startY < 6 && move.startY > 1)) {
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
 				}
 			}
-			return isJumpMoveKingLegal;
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
 		}
+
+		else if ((move.startX > 5) && (move.startY < 6 && move.startY > 1)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startY < 2) && (move.startX < 6 && move.startX > 1)) {
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY + 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && (!board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startY > 5) && (move.startX < 6 && move.startX > 1)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					} else if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startX < 2) && (move.startY < 2)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY + 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startX > 5) && (move.startY < 2)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY + 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY + 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startX < 2 ) && (move.startY > 5)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX + 2)) &&
+							(board[move.startY - 1][move.startX + 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
+		else if ((move.startX > 5 ) && (move.startY > 5)){
+			if (turn.equals("R")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("R-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('B'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+			else if (turn.equals("B")) {
+				if (board[move.startY][move.startX].charAt(2) == 'K' && spaceIsEmpty(move) && !(board[move.startY][move.startX].equals("B-P"))) {
+					if ((move.endY == (move.startY - 2) && move.endX == (move.startX - 2)) &&
+							(board[move.startY - 1][move.startX - 1].charAt(0) == ('R'))) {
+						isJumpMoveKingLegal = true;
+					}
+				}
+			}
+		}
+
 		return isJumpMoveKingLegal;
 	}
-
-
 
 	public void removeJumpedPiece(Move move, String movingPiece) {
 		if(turn.equals("R")){
 			if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2))) {
 				board[move.startY + 1][move.startX + 1] = "EMPTY";
 				black_count -= 1;
-				turn = "B";
 			}
 			else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2)) {
 				board[move.startY + 1][move.startX - 1] = "EMPTY";
 				black_count -= 1;
-				turn = "B";
 			}
 			else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2)) {
 				board[move.startY - 1][move.startX + 1] = "EMPTY";
 				black_count -= 1;
-				turn = "B";
 			}
 			else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2)) {
 				board[move.startY - 1][move.startX - 1] = "EMPTY";
 				black_count -= 1;
-				turn = "B";
 			}
 		}
 		else if(turn.equals("B")){
 			if (((move.endY == move.startY + 2) && (move.endX == move.startX + 2))) {
 				board[move.startY + 1][move.startX + 1] = "EMPTY";
 				black_count -= 1;
-				turn = "R";
 			}
 			else if ((move.endY == move.startY + 2 && move.endX == move.startX - 2)) {
 				board[move.startY + 1][move.startX - 1] = "EMPTY";
 				black_count -= 1;
-				turn = "R";
 			}
 			else if ((move.endY == move.startY - 2 && move.endX == move.startX + 2)) {
 				board[move.startY - 1][move.startX + 1] = "EMPTY";
 				black_count -= 1;
-				turn = "R";
 			}
 			else if ((move.endY == move.startY - 2 && move.endX == move.startX - 2)) {
 				board[move.startY - 1][move.startX - 1] = "EMPTY";
 				black_count -= 1;
-				turn = "R";
 			}
 		}
-
 	}
 }
