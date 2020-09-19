@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Model {
 
 	//Default Black Starts
-	String turn = "B";
+	static String turn = "B";
 	int black_count = 12;
 	int red_count = 12;
 
@@ -51,7 +51,9 @@ public class Model {
 		try {
 			PrintWriter out = new PrintWriter(new File(File));
 			String[][] temp_board = temp;
-			System.out.println(temp_board.length);
+			
+			out.print(getTurn());
+			out.println();
 			//Rows
 			for (int y = 0; y < temp_board.length; y++) {
 				//Columns
@@ -67,13 +69,15 @@ public class Model {
 		}
 	}
 
-	public static String[][] load() {
+	public String[][] load() {
 
 		String temp_board[][] = new String[8][8];
 
 		try {
 
 			Scanner input = new Scanner(new File(File));
+			turn = input.nextLine();
+			
 			//Only runs while
 			while (input.hasNext()) {
 				//Rows
@@ -547,5 +551,14 @@ public class Model {
 				black_count -= 1;
 			}
 		}
+	}
+
+	public void setBoard(String[][] load) {
+		board = load;
+		
+	}
+	
+	public static String getTurn() {
+		return turn;
 	}
 }

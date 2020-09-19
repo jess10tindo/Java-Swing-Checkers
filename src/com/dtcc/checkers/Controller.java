@@ -29,7 +29,7 @@ public class Controller extends JFrame {
                     Model.save(temp_board);
                 }
                 else if(pressedKey == 'l'){
-                    view.update(model.load());
+                    model.setBoard(model.load());
                 }
             }
         };
