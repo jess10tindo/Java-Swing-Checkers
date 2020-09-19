@@ -1,11 +1,11 @@
 package com.dtcc.checkers;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+        import javax.swing.*;
+        import java.awt.*;
+        import java.awt.event.KeyEvent;
+        import java.awt.event.KeyListener;
+        import java.awt.event.MouseAdapter;
+        import java.awt.event.MouseEvent;
 
 public class View extends JPanel {
 
@@ -90,12 +90,12 @@ public class View extends JPanel {
             for(int j = 1; j < 9; j++){
 
                 if(i%2 == j%2){
-                	 g.setColor(Color.decode("#FFFFFF"));
+                    g.setColor(Color.decode("#FFFFFF"));
                 }
 
                 else{
-                	g.setColor(Color.decode("#a52a2a"));
-                   
+                    g.setColor(Color.decode("#a52a2a"));
+
                 }
 
                 g.fillRect(i*100, j*100, 100, 100);
